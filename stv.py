@@ -4,8 +4,11 @@ import math
 import csv
 import random
 
-INPUT_FILE = 'input.csv'
+INPUT_FILE = 'example_input.csv'
 NUM_SEATS = 13
+
+STANDINGS_EVERY_ELECTED = True
+STANDINGS_EVERY_ELIM    = True
 
 
 # Ballot class
@@ -106,14 +109,20 @@ class Election:
 
         return random.choice(list)
     
-    def get_round(self):
-        
+    def get_ranks(self):
+
         cand_score = [0]*len(self.candidates)
 
         for ballot in self.ballots:
             index = ballot.top_candidate()
             if index != -1:
                 cand_score[index] += ballot.get_weight()
+
+        return cand_score
+
+    def get_round(self):
+        
+        cand_score = self.get_ranks()
 
         # print(cand_score)
 
@@ -129,7 +138,7 @@ class Election:
 
             self.remove_candidate(top_cand)
 
-            return True, top_cand_name
+            return 1, top_cand_name
 
         else:
             # No candidate is elected
@@ -140,15 +149,49 @@ class Election:
 
             self.remove_candidate(elim_cand)
 
-            return False, elim_cand_name
+            if (lowest_score < 0.01):
+                return -1, elim_cand_name
+
+            return 0, elim_cand_name
         
     def get_remaining_cand(self):
         return self.candidates
     
     def get_candidate_name(self, index):
         return self.candidates[index]
-
     
+    def get_curr_standings(self):
+
+        ranks = self.get_ranks()
+
+        # Pair lists
+        pairs = [(self.candidates[i], ranks[i]) for i in range(len(ranks))]
+
+        pairs.sort(key=lambda x: x[1], reverse=True)
+
+        return pairs
+
+def print_tuples(tuples, align):
+    print("\ncuwwent standings:")
+    for i, tuple, in enumerate(tuples):
+        spaces = " "*(align - len(tuple[0])- len(str(i+1)))
+        print(f"  {i + 1}. {tuple[0]}{spaces}({tuple[1]})")
+
+
+def print_tuples_diff(tuples, prev, align):
+    print("\ncuwwent standings:")
+    for i, tuple, in enumerate(tuples):
+        prev_tup = next(filter(lambda x: x[0] == tuple[0], prev))
+
+        spaces = " "*(align - len(tuple[0]) - len(str(i+1)))
+
+        if (tuple[1] - prev_tup[1] > 0.001):
+            print(f"  {i + 1}. {tuple[0]}{spaces}({tuple[1]:.2f}) (+{(tuple[1] - prev_tup[1]):.2f})")
+        else:
+            print(f"  {i + 1}. {tuple[0]}{spaces}({tuple[1]:.2f})")
+    print()
+
+
 def main():
 
     print(f"Cawcuwating stv...")
@@ -160,25 +203,47 @@ def main():
     print(f"Numbew of votes: {len(election.ballots)}")
     print(f"Qwuota: {election.quota}")
 
+    # Get initial first ranks
+    prev_tup = election.get_curr_standings()
+    print_tuples(prev_tup, 40)
+    print("\n"+"-"*80)
+
     print(f"\nWound {num_elected + 1}:")
+
     while (election.num_remaining() + num_elected > NUM_SEATS) and (num_elected < NUM_SEATS):
         is_elected, cand_name = election.get_round()
 
-        if is_elected:
-            print(f"\n  {cand_name} iws ewected!!!! OwO ☑")
+        if is_elected == 1:
+            print("\n"+"#"*64)
+            print(f"# {cand_name} iws ewected!!!! OwO")
+            print("#"*64)
             elected.append(cand_name)
             num_elected += 1
+
+            if STANDINGS_EVERY_ELECTED:
+                curr_tuff = election.get_curr_standings()
+                print_tuples_diff(curr_tuff, prev_tup, 40)
+                prev_tup = curr_tuff
+                print("\n"+"-"*80)
+
             if num_elected != NUM_SEATS:
                 print(f"\nWound: {num_elected + 1}")
 
         else:
-            print(f"  {cand_name} iws ewiminated TwT ☒")
+            print("\n"+"~"*64)
+            print(f"~ {cand_name} iws ewiminated TwT")
+            print("~"*64)
+
+            if STANDINGS_EVERY_ELIM and STANDINGS_EVERY_ELECTED and is_elected != -1:
+                curr_tuff = election.get_curr_standings()
+                print_tuples_diff(curr_tuff, prev_tup, 40)
+                prev_tup = curr_tuff
     
     if num_elected != NUM_SEATS:
         print(f"\nWinnews by defauwt:")
         for cand in election.get_remaining_cand():
             elected.append(cand)
-            print(f"  {cand} iws ewected by defauwt!!!! OwO ☑")
+            print(f"  {cand} iws ewected by defauwt!!!! OwO")
 
     print(f"\nThe fowwowing candidates have bewn ewected:")
     for i, cand in enumerate(elected):

@@ -4,7 +4,7 @@ import math
 import csv
 import random
 
-INPUT_FILE = 'example_input.csv'
+INPUT_FILE = 'input.csv'
 NUM_SEATS = 13
 
 STANDINGS_EVERY_ELECTED = True

@@ -1,4 +1,4 @@
-# VoD STV Calculator
+# VoD STV Cawcuwatow
 
 import math
 import csv
@@ -73,7 +73,7 @@ class Election:
                     ballot_list.append(Ballot(list(map(self.__int_filter, row))))
         
         except Exception as exc:
-            print(f"Unable to read file {INPUT_FILE} TwT")
+            print(f"Unabwe tuwu wead fiwe {INPUT_FILE} TwT")
             print(exc)
             exit(1)
 
@@ -172,14 +172,14 @@ class Election:
         return pairs
 
 def print_tuples(tuples, align):
-    print("\nCurrent standings:")
+    print("\ncuwwent standings:")
     for i, tuple, in enumerate(tuples):
         spaces = " "*(align - len(tuple[0])- len(str(i+1)))
         print(f"  {i + 1}. {tuple[0]}{spaces}({tuple[1]})")
 
 
 def print_tuples_diff(tuples, prev, align):
-    print("\nCurrent Standings:")
+    print("\ncuwwent standings:")
     for i, tuple, in enumerate(tuples):
         prev_tup = next(filter(lambda x: x[0] == tuple[0], prev))
 
@@ -194,28 +194,28 @@ def print_tuples_diff(tuples, prev, align):
 
 def main():
 
-    print(f"Calculating stv...")
+    print(f"Cawcuwating stv...")
 
     num_elected = 0
     elected = []
     election = Election()
 
-    print(f"Number of votes: {len(election.ballots)}")
-    print(f"Quota: {election.quota}")
+    print(f"Numbew of votes: {len(election.ballots)}")
+    print(f"Qwuota: {election.quota}")
 
     # Get initial first ranks
     prev_tup = election.get_curr_standings()
     print_tuples(prev_tup, 40)
     print("\n"+"-"*80)
 
-    print(f"\nRound {num_elected + 1}:")
+    print(f"\nWound {num_elected + 1}:")
 
     while (election.num_remaining() + num_elected > NUM_SEATS) and (num_elected < NUM_SEATS):
         is_elected, cand_name = election.get_round()
 
         if is_elected == 1:
             print("\n"+"#"*64)
-            print(f"# {cand_name} is elected!!!! OwO")
+            print(f"# {cand_name} iws ewected!!!! OwO")
             print("#"*64)
             elected.append(cand_name)
             num_elected += 1
@@ -227,11 +227,11 @@ def main():
                 print("\n"+"-"*80)
 
             if num_elected != NUM_SEATS:
-                print(f"\nRound: {num_elected + 1}")
+                print(f"\nWound: {num_elected + 1}")
 
         else:
             print("\n"+"~"*64)
-            print(f"~ {cand_name} is eliminated TwT")
+            print(f"~ {cand_name} iws ewiminated TwT")
             print("~"*64)
 
             if STANDINGS_EVERY_ELIM and STANDINGS_EVERY_ELECTED and is_elected != -1:
@@ -240,16 +240,16 @@ def main():
                 prev_tup = curr_tuff
     
     if num_elected != NUM_SEATS:
-        print(f"\nWinners by default:")
+        print(f"\nWinnews by defauwt:")
         for cand in election.get_remaining_cand():
             elected.append(cand)
-            print(f"  {cand} is elected by default!!!! OwO")
+            print(f"  {cand} iws ewected by defauwt!!!! OwO")
 
-    print(f"\nThe following candidates have been elected:")
+    print(f"\nThe fowwowing candidates have bewn ewected:")
     for i, cand in enumerate(elected):
         print(f"  {i+1}.\t{cand}")
 
-    print(f"\nAll done! uwu")
+    print(f"\nAww done! uwu")
     
 
 
